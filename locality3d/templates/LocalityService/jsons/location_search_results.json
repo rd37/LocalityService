@@ -1,0 +1,6 @@
+[
+ {% for object in objects %}
+    {"id":{{object.pk}}, "height": "{{ object.height }}", "lat": {{ object.lat }}, "lng": {{ object.lng }} }
+    {% if not forloop.last %} , {% endif %}
+ {% endfor %}
+]

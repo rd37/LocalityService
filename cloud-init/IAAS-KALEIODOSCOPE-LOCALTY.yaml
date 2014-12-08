@@ -1,0 +1,12 @@
+#cloud-config
+
+write_files:
+-   content: |
+        # rons test file
+    owner: ubuntu:ubuntu
+    path: /home/ubuntu/test.file
+    permissions: 0755
+    
+packages:
+ - git
+ - python-pip
