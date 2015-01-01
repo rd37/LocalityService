@@ -1,0 +1,2 @@
+#location-service-url: 'http://142.104.17.139/locality'
+location-service-url: 'http://127.0.0.1:8000/locality'
