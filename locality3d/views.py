@@ -20,11 +20,15 @@ def index(request):
     
 @csrf_exempt
 def insert(request):
+    print "Try Insert"
     jsonMsg = request.GET['jsonMsg']
+    print "Got Message %s"%jsonMsg
     json_req = json.loads(jsonMsg)
-    loc_obj = location(lat=json_req['lat'],lng=json_req['lng'],height=json_req['height'])
+    #print "Got message %s"%json_req
+    loc_obj = location(lat=json_req['lat'],lng=json_req['lng'],name=json_req['name'],height=json_req['height'])
     loc_obj.save()
-    return HttpResponse('{"id":%s,"lat":%s,"lng":%s,"height":%s}'%(str(loc_obj.pk),json_req['lat'],json_req['lng'],json_req['height'] ))
+    #print "done insert save"
+    return HttpResponse('{"id":%s,"lat":%s,"lng":%s,"name":"%s","height":%s}'%(str(loc_obj.pk),json_req['lat'],json_req['lng'],json_req['name'],json_req['height'] ))
 
 @csrf_exempt
 def delete(request):
@@ -40,6 +44,18 @@ def delete(request):
         loc_obj[0].delete()
         return HttpResponse('{"Error":false,"Message":"Id %s Found"}'%json_req['id'])
 
+@csrf_exempt
+def get(request):
+    print "3DLocality::Get"
+    jsonMsg = request.GET['jsonMsg']
+    json_req = json.loads(jsonMsg)
+    print "Find Location Object id %s"%(json_req['id'])
+    loc_obj = location.objects.filter(pk=json_req['id'])
+    
+    if len(loc_obj) == 0:
+        return HttpResponse('{"Error":true,"Message":"Id %s not Found"}'%json_req['id'])
+    else:
+        return HttpResponse('{"Error":false,"info": {"lat":%s,"lng":%s,"height":%s,"name":"%s"} }'%(loc_obj[0].lat,loc_obj[0].lng,loc_obj[0].height,loc_obj[0].name))
 
 @csrf_exempt
 def update(request):
@@ -56,6 +72,8 @@ def update(request):
             loc_obj[0].lat = json_req['lat']
         if 'lng' in json_req:
             loc_obj[0].lng = json_req['lng']
+        if 'name' in json_req:
+            loc_obj[0].name = json_req['name']
         if 'height' in json_req:
             loc_obj[0].height = json_req['height']
         loc_obj[0].save()
@@ -73,11 +91,16 @@ def search(request):
         sLngRng = json_req['lng_rng']
         sHeight = json_req['height']
         sHeightRng = json_req['height_rng']
-        search_objs = location.objects.filter(lat__gt=(sLat-sLatRng),lat__lt=(sLat+sLatRng),lng__gt=(sLng-sLngRng),lng__lt=(sLng+sLngRng),height__gt=(sHeight-sHeightRng),height__lt=(sHeight+sHeightRng)).values('pk','lat','lng','height')
+        search_objs = location.objects.filter(lat__gt=(sLat-sLatRng),lat__lt=(sLat+sLatRng),lng__gt=(sLng-sLngRng),lng__lt=(sLng+sLngRng),height__gt=(sHeight-sHeightRng),height__lt=(sHeight+sHeightRng)).values('pk','lat','lng','height','name')
+        location_context = RequestContext(request, {'objects': search_objs } )
+        template = loader.get_template('LocalityService/jsons/location_search_results.json')
+        return HttpResponse( template.render(location_context) )
+    elif 'name' in json_req :
+        name = json_req['name']
+        search_objs = location.objects.filter(name=name)
         location_context = RequestContext(request, {'objects': search_objs } )
         template = loader.get_template('LocalityService/jsons/location_search_results.json')
         return HttpResponse( template.render(location_context) )
     else:
         return HttpResponse('{"Error":true,"Message":"Please Check your Parameters"}')
-    
     

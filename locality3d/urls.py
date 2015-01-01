@@ -13,4 +13,5 @@ urlpatterns = patterns('',
     url(r'^delete/', views.delete, name='delete'),
     url(r'^update/', views.update, name='update'),
     url(r'^search/', views.search, name='search'),
+    url(r'^get/', views.get, name='get'),
 )

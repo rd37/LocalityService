@@ -19,14 +19,14 @@ class locationapi(object):
         
         
     #returns the object identifier created for the insert
-    def insert(self,lat,lng,height):
-        json_msg = jfac.createInsert(lat,lng,height) 
+    def insert(self,lat,lng,height,name):
+        json_msg = jfac.createInsert(lat,lng,height,name) 
         resp = requests.get("%s/insert/?jsonMsg=%s&sid=90908978"%(self.service_url,json_msg))
         json_obj = json.loads('%s'%resp.content)
         return json_obj['id']
         
-    def delete(self,id):
-        json_msg = jfac.createDelete(id)  
+    def delete(self,ids):
+        json_msg = jfac.createDelete(ids)  
         resp = requests.get("%s/delete/?jsonMsg=%s&sid=90908978"%(self.service_url,json_msg))
         json_obj = json.loads('%s'%resp.content)
         if json_obj['Error']:
@@ -34,8 +34,8 @@ class locationapi(object):
         else:
             return True
         
-    def update(self,id,lat,lng,height):
-        json_msg = jfac.createUpdate(id,lat,lng,height)   
+    def update(self,ids,lat,lng,height,name):
+        json_msg = jfac.createUpdate(ids,lat,lng,height,name)   
         resp = requests.get("%s/update/?jsonMsg=%s&sid=90908978"%(self.service_url,json_msg))
         json_obj = json.loads('%s'%resp.content)
         if json_obj['Error']:
@@ -44,8 +44,8 @@ class locationapi(object):
             return True
         
     #returns a json object
-    def search(self,lat,lng,height,lat_rng,lng_rng,height_rng):
-        json_msg = jfac.createSearch(lat,lng,height,lat_rng,lng_rng,height_rng)  
+    def search(self,lat=None,lng=None,height=None,lat_rng=None,lng_rng=None,height_rng=None,name=None):
+        json_msg = jfac.createSearch(lat,lng,height,lat_rng,lng_rng,height_rng,name)  
         resp = requests.get("%s/search/?jsonMsg=%s&sid=90908978"%(self.service_url,json_msg))
         json_obj = json.loads('%s'%resp.content)
         if 'Error' in json_obj:
@@ -53,3 +53,13 @@ class locationapi(object):
         else:
             return json_obj
         return str(json_obj)
+    
+    def get(self,ids):
+        json_msg = jfac.createGet(ids)   
+        resp = requests.get("%s/get/?jsonMsg=%s&sid=90908978"%(self.service_url,json_msg))
+        print "Get::%s"%resp.content
+        json_obj = json.loads('%s'%resp.content)
+        if json_obj['Error']:
+            return None
+        else:
+            return json_obj['info']

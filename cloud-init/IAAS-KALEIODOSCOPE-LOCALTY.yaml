@@ -8,5 +8,9 @@ write_files:
     permissions: 0755
     
 packages:
- - git
  - python-pip
+ - git
+ - python-django
+ 
+runcmd:
+ - [ echo, "what" ]

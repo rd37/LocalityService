@@ -4,6 +4,7 @@ from django.db import models
 class location(models.Model):
     lat = models.DecimalField(decimal_places=7,max_digits=10)
     lng = models.DecimalField(decimal_places=7,max_digits=10)
+    name = models.CharField(max_length=200)
     height = models.DecimalField(decimal_places=7,max_digits=10)
     
     def __str__(self):

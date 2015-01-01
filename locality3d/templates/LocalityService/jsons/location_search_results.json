@@ -1,6 +1,6 @@
 [
  {% for object in objects %}
-    {"id":{{object.pk}}, "height": "{{ object.height }}", "lat": {{ object.lat }}, "lng": {{ object.lng }} }
+    {"id":{{object.pk}}, "height": "{{ object.height }}", "lat": {{ object.lat }}, "lng": {{ object.lng }}, "name": "{{ object.name }}" }
     {% if not forloop.last %} , {% endif %}
  {% endfor %}
 ]
